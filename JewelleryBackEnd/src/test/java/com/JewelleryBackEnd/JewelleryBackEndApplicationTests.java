@@ -1,10 +1,10 @@
-package com.sunbeam;
+package com.JewelleryBackEnd;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JewelleryShopApplicationTests {
+class JewelleryBackEndApplicationTests {
 
 	@Test
 	void contextLoads() {
