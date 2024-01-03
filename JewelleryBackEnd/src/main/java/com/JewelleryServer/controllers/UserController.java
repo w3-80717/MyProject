@@ -17,9 +17,17 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	@PostMapping("/register") 
-	public Response<?>register(@RequestBody User user){
+	public Response<?> register(@RequestBody User user){
 	//service layer:check if not duplicate and then save user.
-		return Response.success("success");
+		
+		// if email is already registered then register will return null
+		// else register new user successfully
+		
+		if(userService.register(user)!=null) {
+			return Response.success("Registered Successfully");
+		}
+		
+		return Response.error("Registration Failed. Email already registered");
 	}
    
 	
