@@ -2,6 +2,7 @@ package com.JewelleryServer.pojo;
 
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 
@@ -16,7 +17,7 @@ public class User {
 //	password varchar(100),
 //	address varchar(200)
 //	);
-    @javax.persistence.Id
+    @Id
     private int uid;
     private String uname;
     private String role;
