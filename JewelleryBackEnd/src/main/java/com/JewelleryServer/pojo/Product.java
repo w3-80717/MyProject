@@ -1,10 +1,5 @@
 package com.JewelleryServer.pojo;
 
-
-//package com.JewelleryBackEnd.dto;
-
-import org.springframework.web.multipart.MultipartFile;
-
 public class Product {
 //	pid int primary key auto_increment,
 //	pname varchar(50),

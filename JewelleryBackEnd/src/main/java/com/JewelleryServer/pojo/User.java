@@ -1,13 +1,10 @@
 package com.JewelleryServer.pojo;
 
 
-//package com.JewelleryBackEnd.dto;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-import java.sql.Date;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 @Entity
 @Table(name="users")
 public class User {
@@ -19,7 +16,7 @@ public class User {
 //	password varchar(100),
 //	address varchar(200)
 //	);
-    @Id
+    @javax.persistence.Id
     private int uid;
     private String uname;
     private String role;
