@@ -1,10 +1,17 @@
 package com.JewelleryServer.pojo;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "products")
 public class Product {
 //	pid int primary key auto_increment,
 //	pname varchar(50),
 //	price double
 	
+	@Id
     private int pid;
     private String pname;
 	private double price;
