@@ -15,8 +15,6 @@ import com.JewelleryServer.services.UserService;
 
 
 @RestController
-
-
 public class LoginController { 
 	@Autowired
 	public UserService userService;
@@ -53,7 +51,7 @@ public class LoginController {
 	public Response<?> test(HttpSession session){
 		User u = (User)session.getAttribute("curUser"); //cast kb krte user u object set kiya or get ke time session.getattribute Obj class ka o obj return krta
 		//set krte time 
-		return Response.success(u); //ye kyo kiya tha  idhr login nai or logout likha nai link kaisi lagi 3 mapping ki
+		return Response.success(u); 
 	}
 //	@PostMapping("/api/logout")
 //    public ResponseEntity<String> signout(HttpSession session) {
