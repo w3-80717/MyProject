@@ -34,7 +34,7 @@ public class LoginController {
 //   	@PostMapping("/api/login")
 //    public ResponseEntity<String> authenticateUser(@RequestBody Credentials cr, HttpSession session) {
 //        User user = userService.authenticate(cr);
-//        if (user != null) {
+//        if (user != null) { s
 //            session.setAttribute("curUser", user);
 //            return ResponseEntity.ok("Login successful");
 //        }
@@ -46,18 +46,18 @@ public class LoginController {
 		session.invalidate();
 		return Response.success("success");
 	}
-	 
+//	@PostMapping("/api/logout")
+//  public ResponseEntity<String> signout(HttpSession session) {
+//      session.invalidate();
+//      return ResponseEntity.ok("Logout successful");
+//  }
+		 
 	@GetMapping("/test") 
 	public Response<?> test(HttpSession session){
 		User u = (User)session.getAttribute("curUser"); //cast kb krte user u object set kiya or get ke time session.getattribute Obj class ka o obj return krta
 		//set krte time 
 		return Response.success(u); 
 	}
-//	@PostMapping("/api/logout")
-//    public ResponseEntity<String> signout(HttpSession session) {
-//        session.invalidate();
-//        return ResponseEntity.ok("Logout successful");
-//    }
-	
+
  
 }

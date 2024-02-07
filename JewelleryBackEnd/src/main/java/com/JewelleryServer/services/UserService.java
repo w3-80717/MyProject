@@ -18,6 +18,15 @@ public class UserService {
 			return user;
 		return null;
 	}
+	public Object register(User user) {
+		// TODO Auto-generated method stub
+		User checkUser = userDao.findByEmail(user.getEmail());
+		 
+		if(checkUser==null) {
+			return userDao.save(user);
+		}
+		return null;
+	}
 	
 	
 }

@@ -1,6 +1,7 @@
 package com.JewelleryServer.pojo;
 
-
+//{ "email":"admin@gmail.com",
+//"password": "admin"}
 //package com.JewelleryBackEnd.dto;
 
 public class Credential {

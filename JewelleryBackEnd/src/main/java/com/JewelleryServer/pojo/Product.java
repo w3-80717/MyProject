@@ -1,10 +1,21 @@
 package com.JewelleryServer.pojo;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+//{"pname":"necklace",
+//"price":2000}
+@Entity
+@Table(name = "products")
 public class Product {
 //	pid int primary key auto_increment,
 //	pname varchar(50),
 //	price double
-	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+
     private int pid;
     private String pname;
 	private double price;

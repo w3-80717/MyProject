@@ -2,12 +2,15 @@ package com.JewelleryServer.pojo;
 
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 
 @Entity
 @Table(name="users")
+
 public class User {
 //	uid int primary key auto_increment,
 //	uname varchar(20),
@@ -18,6 +21,8 @@ public class User {
 //	address varchar(200)
 //	);
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+
     private int uid;
     private String uname;
     private String role;
