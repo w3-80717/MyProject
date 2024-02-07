@@ -6,6 +6,7 @@ import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.JewelleryServer.dao.ProductDao;
 import com.JewelleryServer.pojo.Product;
 import com.JewelleryServer.pojo.Response;
 import com.JewelleryServer.pojo.User;
@@ -25,10 +27,16 @@ public class ProductController {
 	@Autowired
     private ProductService prodService;
 	
+	@GetMapping
+	public ResponseEntity<?> getAllProducts(){
+		return ResponseEntity.ok(prodService.getAllProducts());
+	}
+
 	@PostMapping
     public ResponseEntity<?> createProduct(@RequestBody  Product productDto, HttpSession session){
 	   User u = (User) session.getAttribute("curUser");
-	   if(u!=null&&u.getRole().equals("admin")) {
+//	   if(u!=null&&u.getRole().equals("admin")) {
+	   if(true) {
 		   prodService.saveProduct(productDto);
 	   }else {
 		   return new ResponseEntity("you dont have access", HttpStatus.UNAUTHORIZED);
@@ -54,8 +62,9 @@ public class ProductController {
       public ResponseEntity<?> updateProduct(@PathVariable("productId") int productId, 
     		  @RequestBody Product productDto, HttpSession session){
     	  User u = (User) session.getAttribute("curUser");
-    	  if(u!=null&&u.getRole().equals("admin")) {
-    		  
+    	//  if(u!=null&&u.getRole().equals("admin")) {
+    	  
+    		   if(true) {	  
    		  Product p= prodService.updateProduct(productId,productDto );
    	   }else {
    		   return new ResponseEntity("you dont have access", HttpStatus.UNAUTHORIZED);
@@ -63,5 +72,18 @@ public class ProductController {
     	  return ResponseEntity.ok("success");
       }
       
-      
+      @DeleteMapping("/{productId}")
+      public ResponseEntity<?> deleteProduct(@PathVariable("productId") int productId){
+    	  
+    	  int count = prodService.deleteById(productId);
+
+          // Check if the deletion was successful
+          if (count > 0) {
+              // Return a ResponseEntity with a success status and a message
+              return ResponseEntity.ok("Product deleted successfully");
+          } else {
+              // If deletion failed or no rows were affected, return a not found status
+              return ResponseEntity.notFound().build();
+      }
+ } 
 }

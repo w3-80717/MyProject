@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 //{"pname":"necklace",
 //"price":2000}
+//{  "pid":2,
+//	  "pname":"necklace",
+//	"price":2000}
 @Entity
 @Table(name = "products")
 public class Product {

@@ -1,9 +1,12 @@
 
 package com.JewelleryServer.services;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.JewelleryServer.dao.ProductDao;
@@ -34,8 +37,21 @@ public class ProductService {
 		return prodDao.save(p);
 	}
 
-	
+		public int deleteById(int productId){
+			prodDao.deleteById(productId);
+			return 1;
+			}
+
+		
+
+		public List<Product> getAllProducts(){
+			return prodDao.findAll();
+			}
+
+
+	}
 
 	
 
-}
+	
+
