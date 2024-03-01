@@ -19,9 +19,9 @@ public class UserService {
 		return null;
 	}
 	public Object register(User user) {
+		user.setRole("customer");
 		// TODO Auto-generated method stub
 		User checkUser = userDao.findByEmail(user.getEmail());
-		 
 		if(checkUser==null) {
 			return userDao.save(user);
 		}

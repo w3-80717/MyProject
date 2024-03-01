@@ -1,9 +1,13 @@
 package com.JewelleryServer.pojo;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 //{"pname":"necklace",
 //"price":2000}
@@ -23,6 +27,30 @@ public class Product {
     private String pname;
 	private double price;
 	
+	@ManyToOne
+	@JoinColumn(name = "cid")
+	private Category category;
+
+	@ManyToOne
+	@JoinColumn(name = "sid")
+	private SubCategory subCategory;
+	
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public SubCategory getSubCategory() {
+		return subCategory;
+	}
+
+	public void setSubCategory(SubCategory subCategory) {
+		this.subCategory = subCategory;
+	}
+
 	public Product() {
 		super();
 	}
@@ -60,7 +88,25 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "Product [pid=" + pid + ", pname=" + pname + ", price=" + price + "]";
+		return "Product [pid=" + pid + ", pname=" + pname + ", price=" + price + ", category=" + category
+				+ ", subCategory=" + subCategory + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(pid);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		return pid == other.pid;
 	}
 	
 	

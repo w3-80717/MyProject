@@ -3,61 +3,43 @@ package com.JewelleryServer.controllers;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.JewelleryServer.pojo.Credential;
-import com.JewelleryServer.pojo.Response;
 import com.JewelleryServer.pojo.User;
 import com.JewelleryServer.services.UserService;
 
-
 @RestController
-public class LoginController { 
+@RequestMapping("/api")
+public class LoginController {
 	@Autowired
 	public UserService userService;
-	//@postMapping is used to handle the post req to /login , in this method
-	@PostMapping("/login") 
-	public Response<?> login(@RequestBody Credential cr, HttpSession httpSession) {
-		//first it fetches credential from body , if the credential is correct valid then stores the user inf in session, 
-		//then return successful response  // then set status sucessful correct then its successful if incorrect then its failed error
-   	 // service layer: authentication and store in session
-   	 User user = userService.authenticate(cr); 
-   	 if(user != null) {
-   		 httpSession.setAttribute("curUser", user);
-   		return Response.success("success");
-   	 }
-   	  return Response.error("Login failed");
-	 
-//   	@PostMapping("/api/login")
-//    public ResponseEntity<String> authenticateUser(@RequestBody Credentials cr, HttpSession session) {
-//        User user = userService.authenticate(cr);
-//        if (user != null) { s
-//            session.setAttribute("curUser", user);
-//            return ResponseEntity.ok("Login successful");
-//        }
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed");
-//    }
-    }
-	@PostMapping("/logout")
-	public Response<?> signout(HttpSession session){
-		session.invalidate();
-		return Response.success("success");
-	}
-//	@PostMapping("/api/logout")
-//  public ResponseEntity<String> signout(HttpSession session) {
-//      session.invalidate();
-//      return ResponseEntity.ok("Logout successful");
-//  }
-		 
-	@GetMapping("/test") 
-	public Response<?> test(HttpSession session){
-		User u = (User)session.getAttribute("curUser"); //cast kb krte user u object set kiya or get ke time session.getattribute Obj class ka o obj return krta
-		//set krte time 
-		return Response.success(u); 
+
+	// @postMapping is used to handle the post req to /login , in this method
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody Credential cr, HttpSession httpSession) {
+		// first it fetches credential from body , if the credential is correct valid
+		// then stores the user inf in session,
+		// then return successful response // then set status sucessful correct then its
+		// successful if incorrect then its failed error
+		// service layer: authentication and store in session
+		User user = userService.authenticate(cr);
+		if (user != null) {
+			httpSession.setAttribute("curUser", user);
+			return ResponseEntity.ok("{\"status\":\"success\",\"role\":\""+user.getRole()+"\"}");
+		}
+		return new ResponseEntity<String>("Login Failed", HttpStatus.UNAUTHORIZED);
 	}
 
- 
+	@PostMapping("/logout")
+	public ResponseEntity<?> signout(HttpSession session) {
+		session.invalidate();
+		return ResponseEntity.ok("Logout success");
+	}
+
 }

@@ -22,7 +22,6 @@ public class User {
 //	);
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-
     private int uid;
     private String uname;
     private String role;
@@ -30,6 +29,8 @@ public class User {
     private String email;
     private String password;
     private String address;
+    
+    
     
 	public User() {
 		super();
