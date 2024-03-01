@@ -141,8 +141,8 @@ const AdminHomePage = () => {
                   </TableCell>
                   <TableCell>{product.pname}</TableCell>
                   <TableCell>{"₹ " + product.price}</TableCell>
-                  <TableCell>{product.cid}</TableCell>
-                  <TableCell>{product.sid}</TableCell>
+                  <TableCell>{product.category.cname}</TableCell>
+                  <TableCell>{product.subCategory.sname}</TableCell>
                   <TableCell>
                     <IconButton style={{ color: "#832729" }} aria-label="edit" onClick={() => handleUpdateProduct(product.pid, product.price)}>
                       <EditIcon />
