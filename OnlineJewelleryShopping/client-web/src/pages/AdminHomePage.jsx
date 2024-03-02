@@ -62,9 +62,9 @@ const AdminHomePage = () => {
       formData.append('cid', newProduct.cid); // cid
       formData.append('sid', newProduct.sid); // sid
 
-      await axios.post(`${config.server}/api/admin`, formData, {
+      await axios.post(`${config.server}/api/admin`, newProduct, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Set the Content-Type header to multipart/form-data for file upload
+          'Content-Type': 'application/json', // Set the Content-Type header to multipart/form-data for file upload
         },
       });
       fetchProducts();

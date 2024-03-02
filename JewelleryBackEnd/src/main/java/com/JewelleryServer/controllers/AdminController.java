@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.JewelleryServer.pojo.Product;
+import com.JewelleryServer.pojo.ProductDto;
 import com.JewelleryServer.pojo.User;
 import com.JewelleryServer.services.ProductService;
 
@@ -31,7 +32,7 @@ public class AdminController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createProduct(@RequestBody Product productDto, HttpSession session) {
+	public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto, HttpSession session) {
 		User u = (User) session.getAttribute("curUser");
 		if (u != null && u.getRole().equals("admin")) {
 			prodService.saveProduct(productDto);

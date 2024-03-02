@@ -15,6 +15,7 @@ import com.JewelleryServer.dao.ProductDao;
 import com.JewelleryServer.dao.SubCategoryDao;
 import com.JewelleryServer.pojo.Category;
 import com.JewelleryServer.pojo.Product;
+import com.JewelleryServer.pojo.ProductDto;
 import com.JewelleryServer.pojo.SubCategory;
 
 @Transactional
@@ -30,8 +31,13 @@ public class ProductService {
 	private SubCategoryDao subCatDao;
 	
 
-	public Product saveProduct(@RequestBody Product product) {
-		return prodDao.save(product);
+	public Product saveProduct(ProductDto product) {
+		Product p = new Product();
+		p.setPname(product.getPname());
+		p.setPrice(product.getPrice());
+		p.setCategory(catDao.getById(product.getCid()));
+		p.setSubCategory(subCatDao.getById(product.getCid()));
+		return prodDao.save(p);
 	}
 
 	public Product getProductById(int productId) {
