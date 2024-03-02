@@ -1,5 +1,7 @@
 package com.JewelleryServer.controllers;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,23 +30,28 @@ public class AdminController {
 	private ProductService prodService;
 
 	@GetMapping
-	public ResponseEntity<?> getAllProducts() {
+	public ResponseEntity<?> getAllProducts(HttpSession session) {
+		User u = (User) session.getAttribute("curUser");
+		if (u != null && u.getRole().equals("admin")) {
 		return ResponseEntity.ok(prodService.getAllProducts());
+	} else {
+		return new ResponseEntity<String>("you dont have access", HttpStatus.UNAUTHORIZED);
+	}
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto, HttpSession session) {
+	public ResponseEntity<?> createProduct(@ModelAttribute ProductDto productDto, HttpSession session) throws IOException {
 		User u = (User) session.getAttribute("curUser");
 		if (u != null && u.getRole().equals("admin")) {
 			prodService.saveProduct(productDto);
 		} else {
-			return new ResponseEntity<String>("you dont have access", HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<String>("you dont have access to create a product.", HttpStatus.UNAUTHORIZED);
 		}
 
 		// check if request is from admin user
 		// service layer: validate and save the product
 		// else
-		// return 403 unauthorised response
+		// return 403 unauthorised response 
 		return ResponseEntity.ok("success");
 	}
 

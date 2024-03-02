@@ -35,6 +35,26 @@ public class Product {
 	@JoinColumn(name = "sid")
 	private SubCategory subCategory;
 	
+	private String image;
+	
+	public Product(int pid, String pname, double price, Category category, SubCategory subCategory, String image) {
+		super();
+		this.pid = pid;
+		this.pname = pname;
+		this.price = price;
+		this.category = category;
+		this.subCategory = subCategory;
+		this.image = image;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
 	public Category getCategory() {
 		return category;
 	}
@@ -53,13 +73,6 @@ public class Product {
 
 	public Product() {
 		super();
-	}
-
-	public Product(int pid, String pname, double price) {
-		super();
-		this.pid = pid;
-		this.pname = pname;
-		this.price = price;
 	}
 
 	public int getPid() {
@@ -89,7 +102,7 @@ public class Product {
 	@Override
 	public String toString() {
 		return "Product [pid=" + pid + ", pname=" + pname + ", price=" + price + ", category=" + category
-				+ ", subCategory=" + subCategory + "]";
+				+ ", subCategory=" + subCategory + ", image=" + image + "]";
 	}
 
 	@Override

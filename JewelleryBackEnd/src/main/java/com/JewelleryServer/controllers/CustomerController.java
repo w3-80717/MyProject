@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.JewelleryServer.pojo.Cart;
 import com.JewelleryServer.pojo.Product;
 import com.JewelleryServer.pojo.User;
+import com.JewelleryServer.pojo.WishList;
 import com.JewelleryServer.services.CartService;
 import com.JewelleryServer.services.ProductService;
+import com.JewelleryServer.services.WishListService;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -26,9 +28,11 @@ public class CustomerController {
 
 	@Autowired
 	private ProductService prodService;
-	
+
 	@Autowired
 	private CartService cartService;
+	@Autowired
+	private WishListService wishListService;
 
 	@GetMapping("/products")
 	public ResponseEntity<?> getAllProducts() {
@@ -54,53 +58,95 @@ public class CustomerController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
+
 	@PostMapping("/addcart/{pid}/{qty}")
-	public ResponseEntity<?> addProductToCart(@PathVariable int pid, @PathVariable int qty, HttpSession session){
+	public ResponseEntity<?> addProductToCart(@PathVariable int pid, @PathVariable int qty, HttpSession session) {
 		User u = (User) session.getAttribute("curUser");
-		if(u==null) {
+		if (u == null) {
 			return new ResponseEntity<String>("Not logged in", HttpStatus.UNAUTHORIZED);
-		}
-		else {
-			Cart c = cartService.addProductToCart(pid, qty,u);
-			if(c==null) {
+		} else {
+			Cart c = cartService.addProductToCart(pid, qty, u);
+			if (c == null) {
 				return ResponseEntity.badRequest().body("Bad Request");
-			}else {
+			} else {
 				return ResponseEntity.ok(c);
 			}
 		}
 	}
-	
+
 	@GetMapping("/cart")
-	public ResponseEntity<?> getCart(HttpSession session){
+	public ResponseEntity<?> getCart(HttpSession session) {
 		User u = (User) session.getAttribute("curUser");
-		if(u==null) {
+		if (u == null) {
 			return new ResponseEntity<String>("Not logged in", HttpStatus.UNAUTHORIZED);
-		}
-		else {
+		} else {
 			Cart c = cartService.getCart(u);
-			if(c==null)
+			if (c == null)
 				return ResponseEntity.badRequest().body("Bad Request");
 			else
 				return ResponseEntity.ok(c);
 		}
-		
+
 	}
-	
+
 	@DeleteMapping("/cart/{ciid}")
-	public ResponseEntity<?> deleteItem(@PathVariable int ciid, HttpSession session){
+	public ResponseEntity<?> deleteItem(@PathVariable int ciid, HttpSession session) {
 		User u = (User) session.getAttribute("curUser");
-		if(u==null) {
+		if (u == null) {
 			return new ResponseEntity<String>("Not logged in", HttpStatus.UNAUTHORIZED);
-		}
-		else {
+		} else {
 			Cart c = cartService.deleteItem(ciid, u);
-			if(c==null)
+			if (c == null)
 				return ResponseEntity.badRequest().body("Bad Request");
 			else
 				return ResponseEntity.ok(c);
 		}
-		
+
+	}
+
+	@PostMapping("/addwishlist/{pid}")
+	public ResponseEntity<?> addProductToWishList(@PathVariable int pid, HttpSession session) {
+		User u = (User) session.getAttribute("curUser");
+		if (u == null) {
+			return new ResponseEntity<String>("Not logged in", HttpStatus.UNAUTHORIZED);
+		} else {
+			WishList wl = wishListService.addProductToWishList(pid, u);
+			if (wl == null) {
+				return ResponseEntity.badRequest().body("Bad Request");
+			} else {
+				return ResponseEntity.ok(wl);
+			}
+		}
+	}
+
+	@GetMapping("/wishlist")
+	public ResponseEntity<?> getWishList(HttpSession session) {
+		User u = (User) session.getAttribute("curUser");
+		if (u == null) {
+			return new ResponseEntity<String>("Not logged in", HttpStatus.UNAUTHORIZED);
+		} else {
+			WishList wl = wishListService.getWishList(u);
+			if (wl == null)
+				return ResponseEntity.badRequest().body("Bad Request");
+			else
+				return ResponseEntity.ok(wl);
+		}
+
+	}
+
+	@DeleteMapping("/wishlist/{wiid}")
+	public ResponseEntity<?> deleteWishListItem(@PathVariable int wiid, HttpSession session) {
+		User u = (User) session.getAttribute("curUser");
+		if (u == null) {
+			return new ResponseEntity<String>("Not logged in", HttpStatus.UNAUTHORIZED);
+		} else {
+			WishList wl = wishListService.deleteWishListItem(wiid, u);
+			if (wl == null)
+				return ResponseEntity.badRequest().body("Bad Request");
+			else
+				return ResponseEntity.ok(wl);
+		}
+
 	}
 
 }

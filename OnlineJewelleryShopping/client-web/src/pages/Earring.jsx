@@ -38,9 +38,7 @@ const Earring = () => {
     const addToWishlist = async (pid) => {
         try {
             // Make a request to your backend to add the product to the cart table
-            const response = await axios.post(`${config.server}/wishlist`, {
-                pid: pid
-            });
+            const response = await axios.post(`${config.server}/api/customer/addwishlist/${pid}`);
             console.log(response.data);
             // Optionally, you can display a success message or update the UI to reflect the product being added to the cart
         } catch (error) {
@@ -61,7 +59,7 @@ const Earring = () => {
                                     component="img"
                                     alt={product.pname}
                                     height="140"
-                                    image={config.server + '/' + product.image}
+                                    image={config.server + product.image}
                                 />
                                 <CardContent>
                                     <Typography variant="h5" component="h2" style={{ color: "#832729", fontWeight: "bold" }}>

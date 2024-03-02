@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Dialog, DialogTitle, DialogContent, TextField } from '@material-ui/core';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -23,6 +24,7 @@ const AdminHomePage = () => {
   // const [updatedPrice, setUpdatedPrice] = useState('');
   const [selectedProductId, setSelectedProductId] = useState('');
   const [newPrice, setNewPrice] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -35,6 +37,7 @@ const AdminHomePage = () => {
       console.log("Image", response.data.image);
       setProducts(response.data);
     } catch (error) {
+      navigate("/")
       console.error('Error fetching products:', error);
     }
   };
@@ -62,9 +65,9 @@ const AdminHomePage = () => {
       formData.append('cid', newProduct.cid); // cid
       formData.append('sid', newProduct.sid); // sid
 
-      await axios.post(`${config.server}/api/admin`, newProduct, {
+      await axios.post(`${config.server}/api/admin`, formData, {
         headers: {
-          'Content-Type': 'application/json', // Set the Content-Type header to multipart/form-data for file upload
+          'Content-Type': 'multipart/form-data', // Set the Content-Type header to multipart/form-data for file upload
         },
       });
       fetchProducts();
@@ -137,7 +140,7 @@ const AdminHomePage = () => {
               {products.map((product) => (
                 <TableRow key={product.pid}>
                   <TableCell>
-                    <img src={config.server + '/' + product.image} alt={product.pname} style={{ width: '70px', height: '70px' }} />
+                    <img src={config.server + product.image} alt={product.pname} style={{ width: '70px', height: '70px' }} />
                   </TableCell>
                   <TableCell>{product.pname}</TableCell>
                   <TableCell>{"₹ " + product.price}</TableCell>

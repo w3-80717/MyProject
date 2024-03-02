@@ -1,14 +1,14 @@
 
 package com.JewelleryServer.services;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.JewelleryServer.dao.CategoryDao;
 import com.JewelleryServer.dao.ProductDao;
@@ -31,12 +31,14 @@ public class ProductService {
 	private SubCategoryDao subCatDao;
 	
 
-	public Product saveProduct(ProductDto product) {
+	public Product saveProduct(ProductDto product) throws IOException{
 		Product p = new Product();
 		p.setPname(product.getPname());
 		p.setPrice(product.getPrice());
 		p.setCategory(catDao.getById(product.getCid()));
 		p.setSubCategory(subCatDao.getById(product.getCid()));
+		p.setImage("/api/images/"+product.getImage().getOriginalFilename());
+		product.getImage().transferTo(Paths.get(System.getProperty("user.home")+"/uploads/"+product.getImage().getOriginalFilename()));
 		return prodDao.save(p);
 	}
 

@@ -77,7 +77,7 @@ const Cart = () => {
                             {cartItems.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell>
-                                        <img src={config.server + '/' + item.image} alt={item.product.name} style={{ width: '50px', height: '50px' }} />
+                                        <img src={config.server + item.product.image} alt={item.product.name} style={{ width: '50px', height: '50px' }} />
                                     </TableCell>
                                     <TableCell>{item.product.pname}</TableCell>
                                     <TableCell>{item.product.price}</TableCell>

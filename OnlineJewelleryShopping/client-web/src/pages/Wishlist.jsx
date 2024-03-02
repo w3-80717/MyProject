@@ -18,9 +18,9 @@ const Wishlist = () => {
 
     const fetchWishlistItems = async () => {
         try {
-            const response = await axios.get(`${config.server}/wishlist`);
+            const response = await axios.get(`${config.server}/api/customer/wishlist`);
             console.log(response.data);
-            setWishlistItems(response.data.data);
+            setWishlistItems(response.data.items);
         } catch (error) {
             console.error('Error fetching cart:', error);
         }
@@ -29,9 +29,7 @@ const Wishlist = () => {
     const addToCart = async (pid) => {
         try {
             // Make a request to your backend to add the product to the cart table
-            const response = await axios.post(`${config.server}/cart`, {
-                pid: pid
-            });
+            const response = await axios.post(`${config.server}api/customer/addcart/${pid}/1`);
             console.log(response.data);
             // Optionally, you can display a success message or update the UI to reflect the product being added to the cart
         } catch (error) {
@@ -42,7 +40,7 @@ const Wishlist = () => {
 
     const handleDeleteProduct = async (id) => {
         try {
-          await axios.delete(`${config.server}/wishlist/${id}`);
+          await axios.delete(`${config.server}/api/customer/wishlist/${id}`);
           fetchWishlistItems(); // Refresh the product list after deleting
         } catch (error) {
           console.error('Error deleting wishlist item:', error);
@@ -68,10 +66,10 @@ const Wishlist = () => {
                             {wishlistItems.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell>
-                                        <img src={config.server + '/' + item.image} alt={item.pname} style={{ width: '50px', height: '50px' }} />
+                                        <img src={config.server + item.product.image} alt={item.product.pname} style={{ width: '50px', height: '50px' }} />
                                     </TableCell>
-                                    <TableCell>{item.pname}</TableCell>
-                                    <TableCell>{item.price}</TableCell>
+                                    <TableCell>{item.product.pname}</TableCell>
+                                    <TableCell>{item.product.price}</TableCell>
                                     <TableCell>
                                         
                                         <Button
@@ -79,11 +77,11 @@ const Wishlist = () => {
                                             component={Link}
                                             to="/cart"
                                             style={{ color: "#832729", fontWeight: "bold", }}
-                                            onClick={() => addToCart(item.pid)}
+                                            onClick={() => addToCart(item.product.pid)}
                                         >
                                             Add to Cart
                                         </Button>
-                                        <IconButton style={{ color: "#832729" }} aria-label="delete" onClick={() => handleDeleteProduct(item.wid)}>
+                                        <IconButton style={{ color: "#832729" }} aria-label="delete" onClick={() => handleDeleteProduct(item.wiid)}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </TableCell>

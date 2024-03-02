@@ -1,12 +1,26 @@
 package com.JewelleryServer.pojo;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import org.springframework.web.multipart.MultipartFile;
 
 public class ProductDto {
-	 private String pname;
+	 public MultipartFile getImage() {
+		return image;
+	}
+	public void setImage(MultipartFile image) {
+		this.image = image;
+	}
+	public ProductDto(String pname, double price, int cid, MultipartFile image, int sid) {
+		super();
+		this.pname = pname;
+		this.price = price;
+		this.cid = cid;
+		this.image = image;
+		this.sid = sid;
+	}
+	private String pname;
 		private double price;
 		private int cid;
+		private MultipartFile image;
 		public ProductDto() {
 			super();
 			// TODO Auto-generated constructor stub
