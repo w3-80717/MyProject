@@ -1,6 +1,7 @@
 
 package com.JewelleryServer.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -35,10 +36,13 @@ public class ProductService {
 		Product p = new Product();
 		p.setPname(product.getPname());
 		p.setPrice(product.getPrice());
-		p.setCategory(catDao.getById(product.getCid()));
-		p.setSubCategory(subCatDao.getById(product.getCid()));
+		p.setCategory(catDao.findById(product.getCid()).get());
+		p.setSubCategory(subCatDao.findById(product.getCid()).get());
 		p.setImage("/api/images/"+product.getImage().getOriginalFilename());
-		product.getImage().transferTo(Paths.get(System.getProperty("user.home")+"/uploads/"+product.getImage().getOriginalFilename()));
+		
+		String directory = System.getProperty("user.home")+"/uploads/";
+		new File(directory).mkdir();
+		product.getImage().transferTo(Paths.get(directory+product.getImage().getOriginalFilename()));
 		return prodDao.save(p);
 	}
 
