@@ -54,8 +54,6 @@ public class ProductService {
 	public Product updateProduct(int productId, Product productDto) {
 		// TODO Auto-generated method stub
 		Product p = prodDao.findById(productId).get();
-
-		p.setPname(productDto.getPname());
 		p.setPrice(productDto.getPrice());
 
 		return prodDao.save(p);
