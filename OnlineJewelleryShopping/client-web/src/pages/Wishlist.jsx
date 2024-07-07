@@ -7,9 +7,7 @@ import config from '../config';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Link } from 'react-router-dom';
 
-
 const Wishlist = () => {
-
     const [wishlistItems, setWishlistItems] = useState([]);
 
     useEffect(() => {
@@ -18,18 +16,29 @@ const Wishlist = () => {
 
     const fetchWishlistItems = async () => {
         try {
-            const response = await axios.get(`${config.server}/api/customer/wishlist`);
+            const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+            const response = await axios.get(`${config.server}/api/customer/wishlist`, {
+                headers: {
+                    'Authorization': sessionId, // Set session ID in the Authorization header
+                },
+                withCredentials: true, // Include credentials for CORS
+            });
             console.log(response.data);
             setWishlistItems(response.data.items);
         } catch (error) {
-            console.error('Error fetching cart:', error);
+            console.error('Error fetching wishlist items:', error);
         }
     };
 
     const addToCart = async (pid) => {
         try {
-            // Make a request to your backend to add the product to the cart table
-            const response = await axios.post(`${config.server}api/customer/addcart/${pid}/1`);
+            const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+            const response = await axios.post(`${config.server}/api/customer/addcart/${pid}/1`, {}, {
+                headers: {
+                    'Authorization': sessionId, // Set session ID in the Authorization header
+                },
+                withCredentials: true, // Include credentials for CORS
+            });
             console.log(response.data);
             // Optionally, you can display a success message or update the UI to reflect the product being added to the cart
         } catch (error) {
@@ -40,13 +49,19 @@ const Wishlist = () => {
 
     const handleDeleteProduct = async (id) => {
         try {
-          await axios.delete(`${config.server}/api/customer/wishlist/${id}`);
-          fetchWishlistItems(); // Refresh the product list after deleting
+            const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+            await axios.delete(`${config.server}/api/customer/wishlist/${id}`, {
+                headers: {
+                    'Authorization': sessionId, // Set session ID in the Authorization header
+                },
+                withCredentials: true, // Include credentials for CORS
+            });
+            fetchWishlistItems(); // Refresh the wishlist items after deleting
         } catch (error) {
-          console.error('Error deleting wishlist item:', error);
-          alert('An error occurred while deleting the wishlist item.');
+            console.error('Error deleting wishlist item:', error);
+            alert('An error occurred while deleting the wishlist item.');
         }
-      };
+    };
 
     return (
         <>
@@ -56,10 +71,10 @@ const Wishlist = () => {
                     <Table>
                         <TableHead>
                             <TableRow style={{ backgroundColor: "#832729" }}>
-                                <TableCell style={{color: "white"}}>Image</TableCell>
-                                <TableCell style={{color: "white"}}>Name</TableCell>
-                                <TableCell style={{color: "white"}}>Price</TableCell>
-                                <TableCell style={{color: "white"}}>Actions</TableCell>
+                                <TableCell style={{ color: "white" }}>Image</TableCell>
+                                <TableCell style={{ color: "white" }}>Name</TableCell>
+                                <TableCell style={{ color: "white" }}>Price</TableCell>
+                                <TableCell style={{ color: "white" }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -71,12 +86,11 @@ const Wishlist = () => {
                                     <TableCell>{item.product.pname}</TableCell>
                                     <TableCell>{item.product.price}</TableCell>
                                     <TableCell>
-                                        
                                         <Button
                                             variant='outlined'
                                             component={Link}
                                             to="/cart"
-                                            style={{ color: "#832729", fontWeight: "bold", }}
+                                            style={{ color: "#832729", fontWeight: "bold" }}
                                             onClick={() => addToCart(item.product.pid)}
                                         >
                                             Add to Cart

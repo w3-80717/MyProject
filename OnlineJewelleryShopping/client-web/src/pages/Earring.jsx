@@ -17,7 +17,7 @@ const Earring = () => {
     const fetchEarringProducts = async () => {
         try {
             const response = await axios.get(`${config.server}/api/customer/products`);
-            setEarringProducts(response.data.filter(p => p.subCategory.sid==3));
+            setEarringProducts(response.data.filter(p => p.subCategory.sid == 3));
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -25,8 +25,13 @@ const Earring = () => {
 
     const addToCart = async (pid) => {
         try {
-            // Make a request to your backend to add the product to the cart table
-            const response = await axios.post(`${config.server}/api/customer/addcart/${pid}/1`);
+            const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+            const response = await axios.post(`${config.server}/api/customer/addcart/${pid}/1`, null, {
+                headers: {
+                    'Authorization': sessionId, // Set session ID in the Authorization header
+                },
+                withCredentials: true,
+            });
             console.log(response.data);
             // Optionally, you can display a success message or update the UI to reflect the product being added to the cart
         } catch (error) {
@@ -34,13 +39,18 @@ const Earring = () => {
             alert("Error adding product to cart");
         }
     };
-    
+
     const addToWishlist = async (pid) => {
         try {
-            // Make a request to your backend to add the product to the cart table
-            const response = await axios.post(`${config.server}/api/customer/addwishlist/${pid}`);
+            const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+            const response = await axios.post(`${config.server}/api/customer/addwishlist/${pid}`, null, {
+                headers: {
+                    'Authorization': sessionId, // Set session ID in the Authorization header
+                },
+                withCredentials: true,
+            });
             console.log(response.data);
-            // Optionally, you can display a success message or update the UI to reflect the product being added to the cart
+            // Optionally, you can display a success message or update the UI to reflect the product being added to the wishlist
         } catch (error) {
             console.error('Error adding product to wishlist:', error);
             alert("Error adding product to wishlist");

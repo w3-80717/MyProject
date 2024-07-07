@@ -15,18 +15,28 @@ const Necklace = () => {
     }, []);
 
     const fetchNecklaceProducts = async () => {
-            try {
-                const response = await axios.get(`${config.server}/api/customer/products`);
-                setNecklaceProducts(response.data.filter(p => p.subCategory.sid==1));
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
+        try {
+            const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+            const response = await axios.get(`${config.server}/api/customer/products`, {
+                headers: {
+                    'Authorization': sessionId, // Set session ID in the Authorization header
+                },
+                withCredentials: true, // Include credentials for CORS
+            });
+            setNecklaceProducts(response.data.filter(p => p.subCategory.sid === 1));
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
     };
 
     const addToCart = async (pid) => {
         try {
-            // Make a request to your backend to add the product to the cart table
-            const response = await axios.post(`${config.server}/api/customer/addcart/${pid}/1`);
+            const response = await axios.post(`${config.server}/api/customer/addcart/${pid}/1`, {}, {
+                headers: {
+                    'Authorization': localStorage.getItem('sessionId'), // Set session ID in the Authorization header
+                },
+                withCredentials: true, // Include credentials for CORS
+            });
             console.log(response.data);
             // Optionally, you can display a success message or update the UI to reflect the product being added to the cart
         } catch (error) {
@@ -37,10 +47,14 @@ const Necklace = () => {
 
     const addToWishlist = async (pid) => {
         try {
-            // Make a request to your backend to add the product to the cart table
-            const response = await axios.post(`${config.server}/api/customer/addwishlist/${pid}`);
+            const response = await axios.post(`${config.server}/api/customer/addwishlist/${pid}`, {}, {
+                headers: {
+                    'Authorization': localStorage.getItem('sessionId'), // Set session ID in the Authorization header
+                },
+                withCredentials: true, // Include credentials for CORS
+            });
             console.log(response.data);
-            // Optionally, you can display a success message or update the UI to reflect the product being added to the cart
+            // Optionally, you can display a success message or update the UI to reflect the product being added to the wishlist
         } catch (error) {
             console.error('Error adding product to wishlist:', error);
             alert("Error adding product to wishlist");

@@ -1,99 +1,133 @@
 package com.JewelleryServer.controllers;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.JewelleryServer.pojo.Product;
 import com.JewelleryServer.pojo.ProductDto;
 import com.JewelleryServer.pojo.User;
 import com.JewelleryServer.services.ProductService;
+import com.JewelleryServer.session.SessionManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
+@CrossOrigin(
+    originPatterns = { "https://localhost", "http://localhost:3000", "*" },
+    allowCredentials = "true",
+    allowedHeaders = "*"
+)
 public class AdminController {
 
-	@Autowired
-	private ProductService prodService;
+    @Autowired
+    private ProductService prodService;
 
-	@GetMapping
-	public ResponseEntity<?> getAllProducts(HttpSession session) {
-		User u = (User) session.getAttribute("curUser");
-		if (u != null && u.getRole().equals("admin")) {
-		return ResponseEntity.ok(prodService.getAllProducts());
-	} else {
-		return new ResponseEntity<String>("you dont have access", HttpStatus.UNAUTHORIZED);
-	}
-	}
+    @GetMapping
+    public ResponseEntity<?> getAllProducts(
+        @RequestHeader("Authorization") String sessionId
+    ) {
+        User u = validateAndGetUser(sessionId);
 
-	@PostMapping
-	public ResponseEntity<?> createProduct(@ModelAttribute ProductDto productDto, HttpSession session) throws IOException {
-		User u = (User) session.getAttribute("curUser");
-		if (u != null && u.getRole().equals("admin")) {
-			prodService.saveProduct(productDto);
-		} else {
-			return new ResponseEntity<String>("you dont have access to create a product.", HttpStatus.UNAUTHORIZED);
-		}
+        if (u != null && u.getRole().equals("admin")) {
+            return ResponseEntity.ok(prodService.getAllProducts());
+        } else {
+            return new ResponseEntity<String>(
+                "You don't have access",
+                HttpStatus.UNAUTHORIZED
+            );
+        }
+    }
 
-		// check if request is from admin user
-		// service layer: validate and save the product
-		// else
-		// return 403 unauthorised response 
-		return ResponseEntity.ok("success");
-	}
+    @PostMapping
+    public ResponseEntity<?> createProduct(
+        @ModelAttribute ProductDto productDto,
+        @RequestHeader("Authorization") String sessionId
+    ) throws Exception {
+        User u = validateAndGetUser(sessionId);
 
-	@GetMapping("/{productId}")
-	public ResponseEntity<?> getProductById(@PathVariable("productId") int productId, HttpSession session) {
-		User u = (User) session.getAttribute("curUser");
-		if (u != null && u.getRole().equals("admin")) {
-			Product p = prodService.getProductById(productId);// service layer: get the product by id
-			return ResponseEntity.ok(p);
-		} else {
-			return new ResponseEntity<String>("you dont have access", HttpStatus.UNAUTHORIZED);
-		}
+        if (u != null && u.getRole().equals("admin")) {
+            prodService.saveProduct(productDto);
+            return ResponseEntity.ok("Product created successfully");
+        } else {
+            return new ResponseEntity<String>(
+                "You don't have access to create a product.",
+                HttpStatus.UNAUTHORIZED
+            );
+        }
+    }
 
-	}
+    @GetMapping("/{productId}")
+    public ResponseEntity<?> getProductById(
+        @PathVariable("productId") int productId,
+        @RequestHeader("Authorization") String sessionId
+    ) {
+        User u = validateAndGetUser(sessionId);
 
-	@PutMapping("/{productId}")
-	public ResponseEntity<?> updateProduct(@PathVariable("productId") int productId, @RequestBody Product productDto,
-			HttpSession session) {
-		User u = (User) session.getAttribute("curUser");
-		if (u != null && u.getRole().equals("admin")) {
-			prodService.updateProduct(productId, productDto);
-		} else {
-			return new ResponseEntity<String>("you dont have access", HttpStatus.UNAUTHORIZED);
-		}
-		return ResponseEntity.ok("success");
-	}
+        if (u != null && u.getRole().equals("admin")) {
+            Product p = prodService.getProductById(productId);
+            if (p != null) {
+                return ResponseEntity.ok(p);
+            } else {
+                return new ResponseEntity<String>(
+                    "Product not found",
+                    HttpStatus.NOT_FOUND
+                );
+            }
+        } else {
+            return new ResponseEntity<String>(
+                "You don't have access",
+                HttpStatus.UNAUTHORIZED
+            );
+        }
+    }
 
-	@DeleteMapping("/{productId}")
-	public ResponseEntity<?> deleteProduct(@PathVariable("productId") int productId, HttpSession session) {
-		User u = (User) session.getAttribute("curUser");
-		if (u == null || !u.getRole().equals("admin")) {
-			return new ResponseEntity<String>("you dont have access", HttpStatus.UNAUTHORIZED);
-		}
-		int count = prodService.deleteById(productId);
+    @PutMapping("/{productId}")
+    public ResponseEntity<?> updateProduct(
+        @PathVariable("productId") int productId,
+        @RequestBody Product productDto,
+        @RequestHeader("Authorization") String sessionId
+    ) {
+        User u = validateAndGetUser(sessionId);
 
-		// Check if the deletion was successful
-		if (count > 0) {
-			// Return a ResponseEntity with a success status and a message
-			return ResponseEntity.ok("Product deleted successfully");
-		} else {
-			// If deletion failed or no rows were affected, return a not found status
-			return ResponseEntity.notFound().build();
-		}
-	}
+        if (u != null && u.getRole().equals("admin")) {
+            prodService.updateProduct(productId, productDto);
+            return ResponseEntity.ok("Product updated successfully");
+        } else {
+            return new ResponseEntity<String>(
+                "You don't have access",
+                HttpStatus.UNAUTHORIZED
+            );
+        }
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<?> deleteProduct(
+        @PathVariable("productId") int productId,
+        @RequestHeader("Authorization") String sessionId
+    ) {
+        User u = validateAndGetUser(sessionId);
+
+        if (u != null && u.getRole().equals("admin")) {
+            int count = prodService.deleteById(productId);
+            if (count > 0) {
+                return ResponseEntity.ok("Product deleted successfully");
+            } else {
+                return new ResponseEntity<String>(
+                    "Product not found",
+                    HttpStatus.NOT_FOUND
+                );
+            }
+        } else {
+            return new ResponseEntity<String>(
+                "You don't have access",
+                HttpStatus.UNAUTHORIZED
+            );
+        }
+    }
+
+    // Helper method to validate session ID and retrieve user information
+    private User validateAndGetUser(String sessionId) {
+        // Implement logic to validate session ID and retrieve user information from SessionManager
+        return SessionManager.getSession(sessionId);
+    }
 }

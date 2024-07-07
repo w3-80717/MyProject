@@ -21,7 +21,6 @@ const AdminHomePage = () => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [newProduct, setNewProduct] = useState({ pname: '', price: '', image: '' });
-  // const [updatedPrice, setUpdatedPrice] = useState('');
   const [selectedProductId, setSelectedProductId] = useState('');
   const [newPrice, setNewPrice] = useState('');
   const navigate = useNavigate();
@@ -32,12 +31,18 @@ const AdminHomePage = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${config.server}/api/admin`);
+      const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+      const response = await axios.get(`${config.server}/api/admin`, {
+        headers: {
+          'Authorization': sessionId, // Set session ID in the Authorization header
+        },
+        withCredentials: true,
+      });
       console.log(response.data);
       console.log("Image", response.data.image);
       setProducts(response.data);
     } catch (error) {
-      navigate("/")
+      navigate("/");
       console.error('Error fetching products:', error);
     }
   };
@@ -51,7 +56,7 @@ const AdminHomePage = () => {
   };
 
   const handleCloseUpdateDialog = () => {
-    setOpenUpdateDialog(false);
+    setOpenUpdateDialog(false); // Define handleCloseUpdateDialog to close the update dialog
   };
 
 
@@ -60,15 +65,17 @@ const AdminHomePage = () => {
       const formData = new FormData();
       formData.append('pname', newProduct.pname);
       formData.append('price', newProduct.price);
-      formData.append('image', newProduct.image); // Append the image file to the FormData object
+      formData.append('image', newProduct.image);
+      formData.append('cid', newProduct.cid);
+      formData.append('sid', newProduct.sid);
 
-      formData.append('cid', newProduct.cid); // cid
-      formData.append('sid', newProduct.sid); // sid
-
+      const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
       await axios.post(`${config.server}/api/admin`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Set the Content-Type header to multipart/form-data for file upload
+          'Content-Type': 'multipart/form-data',
+          'Authorization': sessionId, // Set session ID in the Authorization header
         },
+        withCredentials: true,
       });
       fetchProducts();
       setNewProduct({ pname: '', price: '', image: '', cid: '', sid: '' });
@@ -80,7 +87,7 @@ const AdminHomePage = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]; // Get the first file selected by the user
+    const file = e.target.files[0];
     setNewProduct({ ...newProduct, image: file });
   };
 
@@ -90,10 +97,16 @@ const AdminHomePage = () => {
     setOpenUpdateDialog(true);
   };
 
-  const handleConfirmUpdate = async (id) => {
+  const handleConfirmUpdate = async () => {
     try {
-      await axios.put(`${config.server}/api/admin/${selectedProductId}`, { price: newPrice });
-      fetchProducts(); // Refresh the product list after updating
+      const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+      await axios.put(`${config.server}/api/admin/${selectedProductId}`, { price: newPrice }, {
+        headers: {
+          'Authorization': sessionId, // Set session ID in the Authorization header
+        },
+        withCredentials: true,
+      });
+      fetchProducts();
       setOpenUpdateDialog(false);
     } catch (error) {
       console.error('Error updating product:', error);
@@ -103,8 +116,14 @@ const AdminHomePage = () => {
 
   const handleDeleteProduct = async (id) => {
     try {
-      await axios.delete(`${config.server}/api/admin/${id}`);
-      fetchProducts(); // Refresh the product list after deleting
+      const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+      await axios.delete(`${config.server}/api/admin/${id}`, {
+        headers: {
+          'Authorization': sessionId, // Set session ID in the Authorization header
+        },
+        withCredentials: true,
+      });
+      fetchProducts();
     } catch (error) {
       console.error('Error deleting product:', error);
       alert('An error occurred while deleting the product.');

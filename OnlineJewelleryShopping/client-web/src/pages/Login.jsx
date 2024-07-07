@@ -11,26 +11,26 @@ const Login = () => {
 
   const handleLogin = () => {
     axios.post(`${config.server}/api/login`, { email, password })
-    .then(response =>{
-      const { status, role } = response.data;
-      if (status === 'success'){
-        if (role === 'admin'){
-          navigate('/admin');
+      .then(response => {
+        const { status, role, sessionId } = response.data;
+        console.log(response.headers)
+        if (status === 'success' && sessionId) {
+          localStorage.setItem('sessionId', sessionId); // Store user ID in local storage
+          if (role === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/home');
+          }
+          console.log('Email:', email);
+          console.log('Password:', password);
+        } else {
+          alert('Invalid credentials');
         }
-        else{
-          navigate('/home');
-        }
-        console.log('Email:', email);
-        console.log('Password:', password);
-      }
-      else{
-        alert('Invalid credentials');
-      }
-    })
-    .catch(error =>{
-      console.error('Login error : ', error);
-      alert('An error occurred while logging in');
-    });
+      })
+      .catch(error => {
+        console.error('Login error:', error);
+        alert('An error occurred while logging in');
+      });
   };
 
   return (
@@ -43,7 +43,7 @@ const Login = () => {
           alignItems: 'center',
         }}
       >
-        <Typography style={{color: "#832729", fontWeight: "bold"}} component="h1" variant="h4">
+        <Typography style={{ color: "#832729", fontWeight: "bold" }} component="h1" variant="h4">
           Login
         </Typography>
         <Box component="form" noValidate sx={{ mt: 1 }}>
@@ -72,7 +72,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button
-            style={{backgroundColor: "#832729"}}
+            style={{ backgroundColor: "#832729" }}
             type="button"
             fullWidth
             variant="contained"
@@ -83,16 +83,14 @@ const Login = () => {
           </Button>
         </Box>
 
-
         <Typography sx={{ mt: 2 }}>
           Don't have an account? <Link to="/register">Register now</Link>
         </Typography>
 
         <Typography sx={{ mt: 2 }}>
-          Go to homepage.. 
+          Go to homepage..
           <Link to="/home">Skip</Link>
         </Typography>
-
 
       </Box>
     </Container>

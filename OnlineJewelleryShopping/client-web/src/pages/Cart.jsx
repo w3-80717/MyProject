@@ -7,9 +7,7 @@ import config from '../config';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useNavigate } from 'react-router-dom';
 
-
 const Cart = () => {
-
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const navigate = useNavigate();
@@ -24,13 +22,19 @@ const Cart = () => {
     }, [cartItems]);
 
     const calculateTotalPrice = () => {
-        const total = cartItems.reduce((acc, item) => { console.log(acc,item.price); return acc + item.product.price;}, 0);
+        const total = cartItems.reduce((acc, item) => acc + item.product.price, 0);
         setTotalPrice(total);
     };
 
     const fetchCartItems = async () => {
         try {
-            const response = await axios.get(`${config.server}/api/customer/cart`);
+            const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+            const response = await axios.get(`${config.server}/api/customer/cart`, {
+                headers: {
+                    'Authorization': sessionId, // Set session ID in the Authorization header
+                },
+                withCredentials: true,
+            });
             console.log(response.data);
             setCartItems(response.data.items);
         } catch (error) {
@@ -40,8 +44,13 @@ const Cart = () => {
 
     const handleDeleteProduct = async (id) => {
         try {
-            await axios.delete(`${config.server}/api/customer/cart/${id}`);
-            console.log("id", id);
+            const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from localStorage
+            await axios.delete(`${config.server}/api/customer/cart/${id}`, {
+                headers: {
+                    'Authorization': sessionId, // Set session ID in the Authorization header
+                },
+                withCredentials: true,
+            });
             fetchCartItems();
         } catch (error) {
             console.error('Error deleting cart item:', error);
@@ -67,10 +76,10 @@ const Cart = () => {
                     <Table>
                         <TableHead>
                             <TableRow style={{ backgroundColor: "#832729" }}>
-                                <TableCell style={{color: "white"}}>Image</TableCell>
-                                <TableCell style={{color: "white"}}>Name</TableCell>
-                                <TableCell style={{color: "white"}}>Price</TableCell>
-                                <TableCell style={{color: "white"}}>Actions</TableCell>
+                                <TableCell style={{ color: "white" }}>Image</TableCell>
+                                <TableCell style={{ color: "white" }}>Name</TableCell>
+                                <TableCell style={{ color: "white" }}>Price</TableCell>
+                                <TableCell style={{ color: "white" }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -82,12 +91,10 @@ const Cart = () => {
                                     <TableCell>{item.product.pname}</TableCell>
                                     <TableCell>{item.product.price}</TableCell>
                                     <TableCell>
-                                        <IconButton style={{ color: "#832729" }} aria-label="delete" onClick={() => {
-                                            handleDeleteProduct(item.ciid);
-                                            console.log("id line 81", item.cartId);
-                                        }}>
+                                        <IconButton style={{ color: "#832729" }} aria-label="delete" onClick={() => handleDeleteProduct(item.ciid)}>
                                             <DeleteIcon />
-                                        </IconButton></TableCell>
+                                        </IconButton>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -100,9 +107,9 @@ const Cart = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <div style={{display: "flex", justifyContent: "space-around", marginTop: "20px"}}>
-                <Button variant="contained" style={{backgroundColor: "#832729"}} onClick={handlePlaceOrder}>Place Order</Button>
-                <Button variant="contained" style={{backgroundColor: "#832729"}} onClick={handleContinueShopping}>Continue Shopping</Button>
+                <div style={{ display: "flex", justifyContent: "space-around", marginTop: "20px" }}>
+                    <Button variant="contained" style={{ backgroundColor: "#832729" }} onClick={handlePlaceOrder}>Place Order</Button>
+                    <Button variant="contained" style={{ backgroundColor: "#832729" }} onClick={handleContinueShopping}>Continue Shopping</Button>
                 </div>
             </Container>
         </>
