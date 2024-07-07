@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Plugins, Capacitor } from "@capacitor/core";
 
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -22,6 +23,25 @@ import NoseRing from './pages/NoseRing';
 import ThankYou from './pages/ThankYou';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+useEffect(() => {
+    if (Capacitor.isNative) {
+      Plugins.App.addListener("backButton", (e) => {
+        if (window.location.pathname === "/") {
+          // Show A Confirm Box For User to exit app or not
+          let ans = window.confirm("Are you sure");
+          if (ans) {
+            Plugins.App.exitApp();
+          } 
+        } else if (window.location.pathname === "/YourFirstPageRoute") {
+           // Show A Confirm Box For User to exit app or not
+          let ans = window.confirm("Are you sure");
+          if (ans) {
+            Plugins.App.exitApp();
+          } 
+        } 
+      });
+    }
+  }, []);
 root.render(
   <React.StrictMode>
 
