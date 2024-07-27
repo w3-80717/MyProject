@@ -1,0 +1,12 @@
+{
+  "appId": "com.app.jewelleryshopping",
+  "appName": "client-web",
+  "webDir": "build",
+  "allowMixedContent": true,
+  "server": {
+    "androidScheme":"http",
+    "cleartext":true,
+    "allowNavigation":true,
+    "hostname":"test"
+  }
+}
